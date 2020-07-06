@@ -6,10 +6,13 @@ import io.chrisdavenport.log4cats.Logger
 import io.chrisdavenport.log4cats.slf4j.Slf4jLogger
 import org.http4s.server.blaze.BlazeServerBuilder
 import shop.modules._
-
+import tofu.optics.macros._
 object Main extends IOApp {
 
   implicit val logger = Slf4jLogger.getLogger[IO]
+
+  @ClassyOptics
+  case class Env()
 
   override def run(args: List[String]): IO[ExitCode] =
     config.load[IO].flatMap { cfg =>

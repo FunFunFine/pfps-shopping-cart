@@ -6,7 +6,7 @@ import eu.timepit.refined.types.numeric.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
 import scala.concurrent.duration._
-
+import tofu.optics.macros._
 object data {
 
   @newtype case class AdminUserTokenConfig(value: Secret[NonEmptyString])
@@ -18,31 +18,33 @@ object data {
 
   @newtype case class ShoppingCartExpiration(value: FiniteDuration)
 
+  @ClassyOptics
   case class CheckoutConfig(
       retriesLimit: PosInt,
       retriesBackoff: FiniteDuration
   )
 
+  @ClassyOptics
   case class AppConfig(
-      adminJwtConfig: AdminJwtConfig,
+  @promote adminJwtConfig: AdminJwtConfig,
       tokenConfig: JwtSecretKeyConfig,
       passwordSalt: PasswordSalt,
       tokenExpiration: TokenExpiration,
       cartExpiration: ShoppingCartExpiration,
-      checkoutConfig: CheckoutConfig,
+      @promote checkoutConfig: CheckoutConfig,
       paymentConfig: PaymentConfig,
-      httpClientConfig: HttpClientConfig,
-      postgreSQL: PostgreSQLConfig,
+      @promote httpClientConfig: HttpClientConfig,
+      @promote postgreSQL: PostgreSQLConfig,
       redis: RedisConfig,
-      httpServerConfig: HttpServerConfig
+      @promote httpServerConfig: HttpServerConfig
   )
-
+  @ClassyOptics
   case class AdminJwtConfig(
       secretKey: JwtSecretKeyConfig,
       claimStr: JwtClaimConfig,
       adminToken: AdminUserTokenConfig
   )
-
+  @ClassyOptics
   case class PostgreSQLConfig(
       host: NonEmptyString,
       port: UserPortNumber,
@@ -56,12 +58,12 @@ object data {
 
   @newtype case class PaymentURI(value: NonEmptyString)
   @newtype case class PaymentConfig(uri: PaymentURI)
-
+  @ClassyOptics
   case class HttpServerConfig(
       host: NonEmptyString,
       port: UserPortNumber
   )
-
+  @ClassyOptics
   case class HttpClientConfig(
       connectTimeout: FiniteDuration,
       requestTimeout: FiniteDuration
