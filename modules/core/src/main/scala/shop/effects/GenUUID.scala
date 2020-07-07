@@ -18,6 +18,7 @@ object GenUUID {
 
   implicit def syncGenUUID[F[_]: Sync]: GenUUID[F] =
     new GenUUID[F] {
+
       def make: F[UUID] =
         Sync[F].delay(UUID.randomUUID())
 

@@ -15,6 +15,7 @@ trait Brands[F[_]] {
 }
 
 object LiveBrands {
+
   def make[F[_]: Sync](
       sessionPool: Resource[F, Session[F]]
   ): F[Brands[F]] =
@@ -32,12 +33,15 @@ final class LiveBrands[F[_]: BracketThrow: GenUUID] private (
     sessionPool.use(_.execute(selectAll))
 
   def create(name: BrandName): F[Unit] =
-    sessionPool.use { session =>
-      session.prepare(insertBrand).use { cmd =>
-        GenUUID[F].make[BrandId].flatMap { id =>
-          cmd.execute(Brand(id, name)).void
+    sessionPool.use {
+      session =>
+        session.prepare(insertBrand).use {
+          cmd =>
+            GenUUID[F].make[BrandId].flatMap {
+              id =>
+                cmd.execute(Brand(id, name)).void
+            }
         }
-      }
     }
 }
 

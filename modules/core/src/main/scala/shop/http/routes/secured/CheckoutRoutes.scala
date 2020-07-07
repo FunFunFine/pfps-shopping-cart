@@ -24,20 +24,21 @@ final class CheckoutRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
   private val httpRoutes: AuthedRoutes[CommonUser, F] = AuthedRoutes.of {
 
     case ar @ POST -> Root as user =>
-      ar.req.decodeR[Card] { card =>
-        program
-          .checkout(user.value.id, card)
-          .flatMap(Created(_))
-          .recoverWith {
-            case CartNotFound(userId) =>
-              NotFound(s"Cart not found for user: ${userId.value}")
-            case EmptyCartError =>
-              BadRequest("Shopping cart is empty!")
-            case PaymentError(cause) =>
-              BadRequest(cause)
-            case OrderError(cause) =>
-              BadRequest(cause)
-          }
+      ar.req.decodeR[Card] {
+        card =>
+          program
+            .checkout(user.value.id, card)
+            .flatMap(Created(_))
+            .recoverWith {
+              case CartNotFound(userId) =>
+                NotFound(s"Cart not found for user: ${userId.value}")
+              case EmptyCartError =>
+                BadRequest("Shopping cart is empty!")
+              case PaymentError(cause) =>
+                BadRequest(cause)
+              case OrderError(cause) =>
+                BadRequest(cause)
+            }
       }
 
   }

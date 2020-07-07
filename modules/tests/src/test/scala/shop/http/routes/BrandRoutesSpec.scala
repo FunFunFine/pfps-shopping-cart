@@ -13,34 +13,40 @@ import suite._
 class BrandRoutesSpec extends HttpTestSuite {
 
   def dataBrands(brands: List[Brand]) = new TestBrands {
+
     override def findAll: IO[List[Brand]] =
       IO.pure(brands)
   }
 
   def failingBrands(brands: List[Brand]) = new TestBrands {
+
     override def findAll: IO[List[Brand]] =
       IO.raiseError(DummyError) *> IO.pure(brands)
   }
 
   test("GET brands [OK]") {
-    forAll { (b: List[Brand]) =>
-      IOAssertion {
-        GET(Uri.uri("/brands")).flatMap { req =>
-          val routes = new BrandRoutes[IO](dataBrands(b)).routes
-          assertHttp(routes, req)(Status.Ok, b)
+    forAll {
+      (b: List[Brand]) =>
+        IOAssertion {
+          GET(Uri.uri("/brands")).flatMap {
+            req =>
+              val routes = new BrandRoutes[IO](dataBrands(b)).routes
+              assertHttp(routes, req)(Status.Ok, b)
+          }
         }
-      }
     }
   }
 
   test("GET brands [ERROR]") {
-    forAll { (b: List[Brand]) =>
-      IOAssertion {
-        GET(Uri.uri("/brands")).flatMap { req =>
-          val routes = new BrandRoutes[IO](failingBrands(b)).routes
-          assertHttpFailure(routes, req)
+    forAll {
+      (b: List[Brand]) =>
+        IOAssertion {
+          GET(Uri.uri("/brands")).flatMap {
+            req =>
+              val routes = new BrandRoutes[IO](failingBrands(b)).routes
+              assertHttpFailure(routes, req)
+          }
         }
-      }
     }
   }
 
@@ -48,5 +54,5 @@ class BrandRoutesSpec extends HttpTestSuite {
 
 protected class TestBrands extends Brands[IO] {
   def create(name: BrandName): IO[Unit] = IO.unit
-  def findAll: IO[List[Brand]]          = IO.pure(List.empty)
+  def findAll: IO[List[Brand]] = IO.pure(List.empty)
 }

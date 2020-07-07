@@ -35,8 +35,9 @@ class TokenGenerator extends IOApp {
   val jwtAuth = JwtAuth.hmac(secretKey.value, algo)
 
   def decodeToken(token: JwtToken): IO[Claim] =
-    jwtDecode[IO](token, jwtAuth).flatMap { c =>
-      IO.fromEither(jsonDecode[Claim](c.content))
+    jwtDecode[IO](token, jwtAuth).flatMap {
+      c =>
+        IO.fromEither(jsonDecode[Claim](c.content))
     }
 
   def run(args: List[String]): IO[ExitCode] =
@@ -53,6 +54,7 @@ object data {
   @newtype case class Claim(value: String)
 
   object Claim {
+
     implicit val jsonDecoder: Decoder[Claim] =
       Decoder.forProduct1("claim")(Claim.apply)
   }

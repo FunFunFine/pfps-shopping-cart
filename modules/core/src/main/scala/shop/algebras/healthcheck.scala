@@ -16,6 +16,7 @@ trait HealthCheck[F[_]] {
 }
 
 object LiveHealthCheck {
+
   def make[F[_]: Concurrent: Parallel: Timer](
       sessionPool: Resource[F, Session[F]],
       redis: RedisCommands[F, String, String]

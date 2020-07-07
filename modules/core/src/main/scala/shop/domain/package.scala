@@ -11,6 +11,7 @@ package object domain {
   // does not work as implicit for some reason...
   private def coercibleEq[A: Eq, B: Coercible[A, *]]: Eq[B] =
     new Eq[B] {
+
       def eqv(x: B, y: B): Boolean =
         Eq[A].eqv(x.repr.asInstanceOf[A], y.repr.asInstanceOf[A])
     }

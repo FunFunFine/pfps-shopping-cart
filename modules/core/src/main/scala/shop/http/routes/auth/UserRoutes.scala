@@ -22,13 +22,14 @@ final class UserRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
 
     case req @ POST -> Root / "users" =>
       req
-        .decodeR[CreateUser] { user =>
-          auth
-            .newUser(user.username.toDomain, user.password.toDomain)
-            .flatMap(Created(_))
-            .recoverWith {
-              case UserNameInUse(u) => Conflict(u.value)
-            }
+        .decodeR[CreateUser] {
+          user =>
+            auth
+              .newUser(user.username.toDomain, user.password.toDomain)
+              .flatMap(Created(_))
+              .recoverWith {
+                case UserNameInUse(u) => Conflict(u.value)
+              }
         }
 
   }

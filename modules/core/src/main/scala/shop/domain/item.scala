@@ -37,6 +37,7 @@ object item {
       brandId: BrandId,
       categoryId: CategoryId
   ) {
+
     def toDomain: CreateItem =
       CreateItem(
         ItemName(name.value.value),
@@ -63,6 +64,7 @@ object item {
       id: ItemIdParam,
       price: PriceParam
   ) {
+
     def toDomain: UpdateItem =
       UpdateItem(
         ItemId(UUID.fromString(id.value.value)),

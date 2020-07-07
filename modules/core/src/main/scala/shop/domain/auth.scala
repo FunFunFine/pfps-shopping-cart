@@ -51,6 +51,7 @@ object auth {
   @newtype case class ClaimContent(uuid: UUID)
 
   object ClaimContent {
+
     implicit val jsonDecoder: Decoder[ClaimContent] =
       Decoder.forProduct1("uuid")(ClaimContent.apply)
   }

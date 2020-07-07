@@ -29,8 +29,9 @@ object generators {
   val genNonEmptyString: Gen[String] =
     Gen
       .chooseNum(21, 40)
-      .flatMap { n =>
-        Gen.buildableOfN[String, Char](n, Gen.alphaChar)
+      .flatMap {
+        n =>
+          Gen.buildableOfN[String, Char](n, Gen.alphaChar)
       }
 
   val brandGen: Gen[Brand] =

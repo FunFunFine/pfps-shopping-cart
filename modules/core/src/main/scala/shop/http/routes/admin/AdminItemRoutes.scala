@@ -22,14 +22,16 @@ final class AdminItemRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
     AuthedRoutes.of {
       // Create new item
       case ar @ POST -> Root as _ =>
-        ar.req.decodeR[CreateItemParam] { item =>
-          Created(items.create(item.toDomain))
+        ar.req.decodeR[CreateItemParam] {
+          item =>
+            Created(items.create(item.toDomain))
         }
 
       // Update price of item
       case ar @ PUT -> Root as _ =>
-        ar.req.decodeR[UpdateItemParam] { item =>
-          Ok(items.update(item.toDomain))
+        ar.req.decodeR[UpdateItemParam] {
+          item =>
+            Ok(items.update(item.toDomain))
         }
     }
 

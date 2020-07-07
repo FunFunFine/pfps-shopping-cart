@@ -7,6 +7,7 @@ import eu.timepit.refined.types.string.NonEmptyString
 import io.estatico.newtype.macros.newtype
 import scala.concurrent.duration._
 import tofu.optics.macros._
+
 object data {
 
   @newtype case class AdminUserTokenConfig(value: Secret[NonEmptyString])
@@ -26,7 +27,7 @@ object data {
 
   @ClassyOptics
   case class AppConfig(
-  @promote adminJwtConfig: AdminJwtConfig,
+      @promote adminJwtConfig: AdminJwtConfig,
       tokenConfig: JwtSecretKeyConfig,
       passwordSalt: PasswordSalt,
       tokenExpiration: TokenExpiration,
@@ -38,12 +39,14 @@ object data {
       redis: RedisConfig,
       @promote httpServerConfig: HttpServerConfig
   )
+
   @ClassyOptics
   case class AdminJwtConfig(
       secretKey: JwtSecretKeyConfig,
       claimStr: JwtClaimConfig,
       adminToken: AdminUserTokenConfig
   )
+
   @ClassyOptics
   case class PostgreSQLConfig(
       host: NonEmptyString,
@@ -58,11 +61,13 @@ object data {
 
   @newtype case class PaymentURI(value: NonEmptyString)
   @newtype case class PaymentConfig(uri: PaymentURI)
+
   @ClassyOptics
   case class HttpServerConfig(
       host: NonEmptyString,
       port: UserPortNumber
   )
+
   @ClassyOptics
   case class HttpClientConfig(
       connectTimeout: FiniteDuration,

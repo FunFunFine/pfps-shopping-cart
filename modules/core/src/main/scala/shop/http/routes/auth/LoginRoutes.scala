@@ -21,13 +21,14 @@ final class LoginRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
   private val httpRoutes: HttpRoutes[F] = HttpRoutes.of[F] {
 
     case req @ POST -> Root / "login" =>
-      req.decodeR[LoginUser] { user =>
-        auth
-          .login(user.username.toDomain, user.password.toDomain)
-          .flatMap(Ok(_))
-          .recoverWith {
-            case InvalidUserOrPassword(_) => Forbidden()
-          }
+      req.decodeR[LoginUser] {
+        user =>
+          auth
+            .login(user.username.toDomain, user.password.toDomain)
+            .flatMap(Ok(_))
+            .recoverWith {
+              case InvalidUserOrPassword(_) => Forbidden()
+            }
       }
 
   }

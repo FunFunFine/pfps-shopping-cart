@@ -45,7 +45,10 @@ final class CheckoutProgram[F[_]: Background: Logger: MonadThrow: Timer](
     }
   }
 
-  private def createOrder(userId: UserId, paymentId: PaymentId, items: List[CartItem], total: Money): F[OrderId] = {
+  private def createOrder(userId: UserId,
+                          paymentId: PaymentId,
+                          items: List[CartItem],
+                          total: Money): F[OrderId] = {
     val action = retryingOnAllErrors[OrderId](
       policy = retryPolicy,
       onError = logError("Order")
@@ -57,8 +60,10 @@ final class CheckoutProgram[F[_]: Background: Logger: MonadThrow: Timer](
         }
         .onError {
           case _ =>
-            Logger[F].error(s"Failed to create order for Payment: ${paymentId}. Rescheduling as a background action") *>
-                Background[F].schedule(bgAction(fa), 1.hour)
+            Logger[F].error(
+              s"Failed to create order for Payment: $paymentId. Rescheduling as a background action"
+            ) *>
+              Background[F].schedule(bgAction(fa), 1.hour)
         }
 
     bgAction(action)
@@ -71,9 +76,9 @@ final class CheckoutProgram[F[_]: Background: Logger: MonadThrow: Timer](
       .flatMap {
         case CartTotal(items, total) =>
           for {
-            pid <- processPayment(Payment(userId, total, card))
+            pid   <- processPayment(Payment(userId, total, card))
             order <- createOrder(userId, pid, items, total)
-            _ <- shoppingCart.delete(userId).attempt.void
+            _     <- shoppingCart.delete(userId).attempt.void
           } yield order
       }
 

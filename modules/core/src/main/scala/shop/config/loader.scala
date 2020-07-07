@@ -42,39 +42,40 @@ object load {
       env("SC_ACCESS_TOKEN_SECRET_KEY").as[NonEmptyString].secret,
       env("SC_ADMIN_USER_TOKEN").as[NonEmptyString].secret,
       env("SC_PASSWORD_SALT").as[NonEmptyString].secret
-    ).parMapN { (secretKey, claimStr, tokenKey, adminToken, salt) =>
-      AppConfig(
-        AdminJwtConfig(
-          JwtSecretKeyConfig(secretKey),
-          JwtClaimConfig(claimStr),
-          AdminUserTokenConfig(adminToken)
-        ),
-        JwtSecretKeyConfig(tokenKey),
-        PasswordSalt(salt),
-        TokenExpiration(30.minutes),
-        ShoppingCartExpiration(30.minutes),
-        CheckoutConfig(
-          retriesLimit = 3,
-          retriesBackoff = 10.milliseconds
-        ),
-        PaymentConfig(paymentUri),
-        HttpClientConfig(
-          connectTimeout = 2.seconds,
-          requestTimeout = 2.seconds
-        ),
-        PostgreSQLConfig(
-          host = "localhost",
-          port = 5432,
-          user = "postgres",
-          database = "store",
-          max = 10
-        ),
-        RedisConfig(redisUri),
-        HttpServerConfig(
-          host = "0.0.0.0",
-          port = 8080
+    ).parMapN {
+      (secretKey, claimStr, tokenKey, adminToken, salt) =>
+        AppConfig(
+          AdminJwtConfig(
+            JwtSecretKeyConfig(secretKey),
+            JwtClaimConfig(claimStr),
+            AdminUserTokenConfig(adminToken)
+          ),
+          JwtSecretKeyConfig(tokenKey),
+          PasswordSalt(salt),
+          TokenExpiration(30.minutes),
+          ShoppingCartExpiration(30.minutes),
+          CheckoutConfig(
+            retriesLimit = 3,
+            retriesBackoff = 10.milliseconds
+          ),
+          PaymentConfig(paymentUri),
+          HttpClientConfig(
+            connectTimeout = 2.seconds,
+            requestTimeout = 2.seconds
+          ),
+          PostgreSQLConfig(
+            host = "localhost",
+            port = 5432,
+            user = "postgres",
+            database = "store",
+            max = 10
+          ),
+          RedisConfig(redisUri),
+          HttpServerConfig(
+            host = "0.0.0.0",
+            port = 8080
+          )
         )
-      )
     }
 
 }

@@ -25,6 +25,7 @@ trait UsersAuth[F[_], A] {
 }
 
 object LiveAdminAuth {
+
   def make[F[_]: Sync](
       adminToken: JwtToken,
       adminUser: AdminUser
@@ -48,6 +49,7 @@ class LiveAdminAuth[F[_]: Applicative](
 }
 
 object LiveUsersAuth {
+
   def make[F[_]: Sync](
       redis: RedisCommands[F, String, String]
   ): F[UsersAuth[F, CommonUser]] =
@@ -63,13 +65,15 @@ class LiveUsersAuth[F[_]: Functor](
   def findUser(token: JwtToken)(claim: JwtClaim): F[Option[CommonUser]] =
     redis
       .get(token.value)
-      .map(_.flatMap { u =>
-        decode[User](u).toOption.map(CommonUser.apply)
+      .map(_.flatMap {
+        u =>
+          decode[User](u).toOption.map(CommonUser.apply)
       })
 
 }
 
 object LiveAuth {
+
   def make[F[_]: Sync](
       tokenExpiration: TokenExpiration,
       tokens: Tokens[F],
@@ -110,8 +114,9 @@ final class LiveAuth[F[_]: GenUUID: MonadThrow] private (
         redis.get(username.value).flatMap {
           case Some(t) => JwtToken(t).pure[F]
           case None =>
-            tokens.create.flatTap { t =>
-              redis.setEx(t.value, user.asJson.noSpaces, TokenExpiration) *>
+            tokens.create.flatTap {
+              t =>
+                redis.setEx(t.value, user.asJson.noSpaces, TokenExpiration) *>
                 redis.setEx(username.value, t.value, TokenExpiration)
             }
         }

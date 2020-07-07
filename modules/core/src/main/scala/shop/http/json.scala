@@ -23,7 +23,9 @@ import shop.http.auth.users._
 import squants.market._
 
 object json extends JsonCodecs {
-  implicit def deriveEntityEncoder[F[_]: Applicative, A: Encoder]: EntityEncoder[F, A] = jsonEncoderOf[F, A]
+
+  implicit def deriveEntityEncoder[F[_]: Applicative, A: Encoder]: EntityEncoder[F, A] =
+    jsonEncoderOf[F, A]
 }
 
 private[http] trait JsonCodecs {
@@ -68,8 +70,11 @@ private[http] trait JsonCodecs {
   implicit val itemDecoder: Decoder[Item] = deriveDecoder[Item]
   implicit val itemEncoder: Encoder[Item] = deriveEncoder[Item]
 
-  implicit val createItemDecoder: Decoder[CreateItemParam] = deriveDecoder[CreateItemParam]
-  implicit val updateItemDecoder: Decoder[UpdateItemParam] = deriveDecoder[UpdateItemParam]
+  implicit val createItemDecoder: Decoder[CreateItemParam] =
+    deriveDecoder[CreateItemParam]
+
+  implicit val updateItemDecoder: Decoder[UpdateItemParam] =
+    deriveDecoder[UpdateItemParam]
 
   implicit val cartItemDecoder: Decoder[CartItem] = deriveDecoder[CartItem]
   implicit val cartItemEncoder: Encoder[CartItem] = deriveEncoder[CartItem]

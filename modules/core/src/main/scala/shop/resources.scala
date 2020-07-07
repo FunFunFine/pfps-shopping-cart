@@ -7,12 +7,15 @@ import dev.profunktor.redis4cats.{ Redis, RedisCommands }
 import dev.profunktor.redis4cats.log4cats._
 import eu.timepit.refined.auto._
 import io.chrisdavenport.log4cats.Logger
-import natchez.Trace.Implicits.noop // needed for skunk
+import natchez.Trace.Implicits.noop
 import org.http4s.client.Client
 import org.http4s.client.blaze.BlazeClientBuilder
+
 import scala.concurrent.ExecutionContext
 import skunk._
+import tofu.optics.macros.ClassyOptics
 
+@ClassyOptics
 final case class AppResources[F[_]](
     client: Client[F],
     psql: Resource[F, Session[F]],

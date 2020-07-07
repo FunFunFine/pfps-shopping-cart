@@ -8,7 +8,7 @@ trait ResourceSuite[A] extends PureTestSuite with BeforeAndAfterAll {
 
   def resources: Resource[IO, A]
 
-  private[this] var res: A            = _
+  private[this] var res: A = _
   private[this] var cleanUp: IO[Unit] = _
 
   private[this] val latch = Deferred[IO, Unit].unsafeRunSync()

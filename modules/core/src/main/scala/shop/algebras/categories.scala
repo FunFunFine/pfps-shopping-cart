@@ -15,6 +15,7 @@ trait Categories[F[_]] {
 }
 
 object LiveCategories {
+
   def make[F[_]: Sync](
       sessionPool: Resource[F, Session[F]]
   ): F[Categories[F]] =
@@ -32,12 +33,15 @@ final class LiveCategories[F[_]: BracketThrow: GenUUID] private (
     sessionPool.use(_.execute(selectAll))
 
   def create(name: CategoryName): F[Unit] =
-    sessionPool.use { session =>
-      session.prepare(insertCategory).use { cmd =>
-        GenUUID[F].make[CategoryId].flatMap { id =>
-          cmd.execute(Category(id, name)).void
+    sessionPool.use {
+      session =>
+        session.prepare(insertCategory).use {
+          cmd =>
+            GenUUID[F].make[CategoryId].flatMap {
+              id =>
+                cmd.execute(Category(id, name)).void
+            }
         }
-      }
     }
 
 }

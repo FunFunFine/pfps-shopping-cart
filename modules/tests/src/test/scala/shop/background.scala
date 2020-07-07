@@ -13,6 +13,7 @@ object background {
 
   def counter(ref: Ref[IO, Int]): Background[IO] =
     new Background[IO] {
+
       def schedule[A](fa: IO[A], duration: FiniteDuration): IO[Unit] =
         ref.update(_ + 1)
     }

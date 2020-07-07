@@ -21,6 +21,7 @@ trait Items[F[_]] {
 }
 
 object LiveItems {
+
   def make[F[_]: Sync](
       sessionPool: Resource[F, Session[F]]
   ): F[Items[F]] =
@@ -39,33 +40,42 @@ final class LiveItems[F[_]: Sync] private (
     sessionPool.use(_.execute(selectAll))
 
   def findBy(brand: BrandName): F[List[Item]] =
-    sessionPool.use { session =>
-      session.prepare(selectByBrand).use { ps =>
-        ps.stream(brand, 1024).compile.toList
-      }
+    sessionPool.use {
+      session =>
+        session.prepare(selectByBrand).use {
+          ps =>
+            ps.stream(brand, 1024).compile.toList
+        }
     }
 
   def findById(itemId: ItemId): F[Option[Item]] =
-    sessionPool.use { session =>
-      session.prepare(selectById).use { ps =>
-        ps.option(itemId)
-      }
+    sessionPool.use {
+      session =>
+        session.prepare(selectById).use {
+          ps =>
+            ps.option(itemId)
+        }
     }
 
   def create(item: CreateItem): F[Unit] =
-    sessionPool.use { session =>
-      session.prepare(insertItem).use { cmd =>
-        GenUUID[F].make[ItemId].flatMap { id =>
-          cmd.execute(id ~ item).void
+    sessionPool.use {
+      session =>
+        session.prepare(insertItem).use {
+          cmd =>
+            GenUUID[F].make[ItemId].flatMap {
+              id =>
+                cmd.execute(id ~ item).void
+            }
         }
-      }
     }
 
   def update(item: UpdateItem): F[Unit] =
-    sessionPool.use { session =>
-      session.prepare(updateItem).use { cmd =>
-        cmd.execute(item).void
-      }
+    sessionPool.use {
+      session =>
+        session.prepare(updateItem).use {
+          cmd =>
+            cmd.execute(item).void
+        }
     }
 
 }

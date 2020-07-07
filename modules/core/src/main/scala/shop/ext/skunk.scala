@@ -7,6 +7,7 @@ import skunk.Codec
 object skunkx {
 
   implicit class CodecOps[B](codec: Codec[B]) {
+
     def cimap[A: Coercible[B, *]](implicit ev: Coercible[A, B]): Codec[A] =
       codec.imap(_.coerce[A])((ev(_)))
   }

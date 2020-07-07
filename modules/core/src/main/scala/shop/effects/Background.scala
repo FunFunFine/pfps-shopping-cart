@@ -6,6 +6,7 @@ import cats.implicits._
 import scala.concurrent.duration.FiniteDuration
 
 trait Background[F[_]] {
+
   def schedule[A](
       fa: F[A],
       duration: FiniteDuration

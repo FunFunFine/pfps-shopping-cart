@@ -25,29 +25,34 @@ class CartRoutesSpec extends HttpTestSuite {
     AuthMiddleware(Kleisli.pure(authUser))
 
   def dataCart(cartTotal: CartTotal) = new TestShoppingCart {
+
     override def get(userId: UserId): IO[CartTotal] =
       IO.pure(cartTotal)
   }
 
   test("GET shopping cart [OK]") {
-    forAll { (ct: CartTotal) =>
-      IOAssertion {
-        GET(Uri.uri("/cart")).flatMap { req =>
-          val routes = new CartRoutes[IO](dataCart(ct)).routes(authMiddleware)
-          assertHttp(routes, req)(Status.Ok, ct)
+    forAll {
+      (ct: CartTotal) =>
+        IOAssertion {
+          GET(Uri.uri("/cart")).flatMap {
+            req =>
+              val routes = new CartRoutes[IO](dataCart(ct)).routes(authMiddleware)
+              assertHttp(routes, req)(Status.Ok, ct)
+          }
         }
-      }
     }
   }
 
   test("POST add item to shopping cart [OK]") {
-    forAll { (c: Cart) =>
-      IOAssertion {
-        POST(c, Uri.uri("/cart")).flatMap { req =>
-          val routes = new CartRoutes[IO](new TestShoppingCart).routes(authMiddleware)
-          assertHttpStatus(routes, req)(Status.Created)
+    forAll {
+      (c: Cart) =>
+        IOAssertion {
+          POST(c, Uri.uri("/cart")).flatMap {
+            req =>
+              val routes = new CartRoutes[IO](new TestShoppingCart).routes(authMiddleware)
+              assertHttpStatus(routes, req)(Status.Created)
+          }
         }
-      }
     }
   }
 
@@ -55,9 +60,10 @@ class CartRoutesSpec extends HttpTestSuite {
 
 protected class TestShoppingCart extends ShoppingCart[IO] {
   def add(userId: UserId, itemId: ItemId, quantity: Quantity): IO[Unit] = IO.unit
+
   def get(userId: UserId): IO[CartTotal] =
     IO.pure(CartTotal(List.empty, USD(0)))
-  def delete(userId: UserId): IO[Unit]                     = IO.unit
+  def delete(userId: UserId): IO[Unit] = IO.unit
   def removeItem(userId: UserId, itemId: ItemId): IO[Unit] = IO.unit
-  def update(userId: UserId, cart: Cart): IO[Unit]         = IO.unit
+  def update(userId: UserId, cart: Cart): IO[Unit] = IO.unit
 }

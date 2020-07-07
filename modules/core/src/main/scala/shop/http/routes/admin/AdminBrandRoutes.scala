@@ -22,8 +22,9 @@ final class AdminBrandRoutes[F[_]: Defer: JsonDecoder: MonadThrow](
   private val httpRoutes: AuthedRoutes[AdminUser, F] =
     AuthedRoutes.of {
       case ar @ POST -> Root as _ =>
-        ar.req.decodeR[BrandParam] { bp =>
-          Created(brands.create(bp.toDomain))
+        ar.req.decodeR[BrandParam] {
+          bp =>
+            Created(brands.create(bp.toDomain))
         }
     }
 
