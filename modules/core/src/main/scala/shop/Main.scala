@@ -20,17 +20,6 @@ object Main extends IOApp {
   case class Environment[F[_]](@promote resources: AppResources[F],
                                @promote config: AppConfig)
 
-  def ren[F[_]: Async : ContextShift, G[_]: Monad: WithRun[*[_], F, AppConfig]]
-  = config.load[F].flatMap {
-    cfg => runContext[G](
-      for {
-        _ <- ().pure[G]
-        _ = implicitly[G HasContext AppConfig]
-      } yield ()
-    )(cfg)
-  }
-
-
   def createApp[F[_]: ConcurrentEffect: ContextShift: Logger, G[_]: ConcurrentEffect: Logger: Timer: ContextShift: WithRun[
     *[_],
     F,
