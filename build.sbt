@@ -78,6 +78,10 @@ lazy val core = (project in file("modules/core"))
     ) ++ Seq(
       "ru.tinkoff" %% "tofu" % "0.7.8",
       "ru.tinkoff" %% "tofu-optics-macro" % "0.7.8",
-      "ru.tinkoff" %% "tofu-optics-core" % "0.7.8"
+      "ru.tinkoff" %% "tofu-optics-core" % "0.7.8",
+      "dev.zio" %% "zio"              % "1.0.0-RC19-2",
+      "dev.zio" %% "zio-test"         % "1.0.0-RC19-2",
+      "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC14",
+
     )
   )
