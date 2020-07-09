@@ -12,7 +12,6 @@ import shop.domain.order._
 import shop.domain.payment._
 import shop.http.json._
 import shop.effects._
-import io.circe.generic.auto._
 
 trait PaymentClient[F[_]] {
   def process(payment: Payment): F[PaymentId]

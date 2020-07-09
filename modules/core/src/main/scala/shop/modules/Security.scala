@@ -20,7 +20,6 @@ object Security {
   def make[F[_]: Sync](
       implicit hasCfg: F HasContext AppConfig,
       hasSessionPool: F HasContext Resource[F, Session[F]],
-      hasEnv: F HasContext Environment[F],
       hasRedis: F HasContext RedisCommands[F, String, String]
   ): F[Security[F]] =
     for {
